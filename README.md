@@ -1,8 +1,6 @@
-<div align="center">
-
-![moneyJ Title](https://capsule-render.vercel.app/api?type=transparent&color=gradient&customColorList=8A2BE2,C71585&text=moneyJ%20Backend%20Server&fontSize=45&fontAlignY=60)
-
-</div>
+<h1 align="center">
+  <img src="https://capsule-render.vercel.app/api?type=transparent&color=gradient&customColorList=8A2BE2,C71585&text=moneyJ%20Backend%20Server&fontSize=45&fontAlignY=60" alt="moneyJ Title">
+</h1>
 
 > **"단순한 저축을 넘어, 사용자의 소비 패턴을 분석해 스마트한 공동 여행 자금 마련을 돕습니다."**
 
@@ -70,10 +68,8 @@
 <hr>
 
 ## 아키텍처
-*(여기에 Eraser.io나 Draw.io로 작성하신 아키텍처 다이어그램 이미지를 삽입하세요)*
-```markdown
-![moneyJ Architecture](이미지_주소_링크)
-```
+<img width="1902" height="854" alt="moneyJ 시스템 아키텍처" src="https://github.com/user-attachments/assets/db122c86-c81a-484f-857c-beae080d9f6c" />
+
 
 본 시스템은 사용자의 사진 진단 및 AI 기반 챗봇 기능을 제공하는 MSA반의 서비스 구조로 설계되어 있습니다. <br>
 각 마이크로서비스는 역할에 따라 분리되어 있으며, 독립적인 데이터베이스와 서버 인스턴스를 통해 <br>
