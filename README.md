@@ -1,12 +1,16 @@
-<h1 align="center">
-  <img src="https://capsule-render.vercel.app/api?type=transparent&color=gradient&customColorList=8A2BE2,C71585&text=moneyJ%20Backend%20Server&fontSize=45&fontAlignY=60" alt="moneyJ Title">
-</h1>
-
-> **"단순한 저축을 넘어, 사용자의 소비 패턴을 분석해 스마트한 공동 여행 자금 마련을 돕습니다."**
+<img width="1800" height="300" alt="money J(노션용2)" src="https://github.com/user-attachments/assets/a6e65a0f-d245-4bb3-92b0-fffd5f2bb9eb" />
 
 <br>
+<br>
+
+> “가고 싶은 여행을, 빚이 아닌 저축으로 준비하자!”
+>  
+> MZ 세대의 소비 분석과 목표 저축을 돕는 맞춤형 금융 관리 서비스
+> 
+> 사용자의 소비 패턴을 분석해 스마트한 공동 여행 자금 마련을 돕습니다.
 
 ## 1. Project Overview
+
 - **개발 기간:** 2025.08.22 ~ 진행 중
 - **참여 인원:** 5명 (Front-end 2명, Back-end 3명)
 - **담당 역할:** Backend Developer
@@ -17,53 +21,31 @@
 <br>
 
 ## 개발 환경
-### Language 
+### Language 
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+
 ### Framework & Runtime
-![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
+
+### ORM (Object-Relational Mapping)
+![JPA](https://img.shields.io/badge/JPA-59666C?style=for-the-badge&logo=hibernate&logoColor=white)
+
 ### Database
-![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
-![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
-### Infra & Messaging
-![Apache Kafka](https://img.shields.io/badge/Apache%20Kafka-000?style=for-the-badge&logo=apachekafka)
-### LLM & AI Framework
-![Langchain](https://img.shields.io/badge/langchain-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white)
-![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=PyTorch&logoColor=white)
+![MySQL](https://img.shields.io/badge/mysql-%2300f.svg?style=for-the-badge&logo=mysql&logoColor=white)
+
+### Infra & Cloud 서비스 (AWS)
+![AWS EC2](https://img.shields.io/badge/AWS_EC2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white)
+![AWS RDS](https://img.shields.io/badge/AWS_RDS-527FFF?style=for-the-badge&logo=amazonrds&logoColor=white)
+
+### External Services & AI
+![CODEF API](https://img.shields.io/badge/CODEF_API-005571?style=for-the-badge)
+![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)
+
 ### DevOps & CI/CD
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
 
-<hr>
 
-## Key Dependencies and Features
-
-### 1. Microservice Architecture (MSA)
-- 서비스 기능별로 모듈화된 독립 실행 유닛으로 구성
-- 인증/회원, 채팅, 장소, AI 진단/채팅, 외부 API 관리 등의 도메인을 독립적으로 분리
-- 각 서비스는 REST API, Kafka 메시지, gRPC 등으로 상호 통신
-
-### 2. Transactional Outbox Pattern
-- 데이터베이스 변경과 Kafka 메시지 발행을 하나의 트랜잭션 내에서 안정적으로 처리
-- Outbox 테이블에 이벤트를 저장하고, Kafka 발행 실패에 대비한 재처리 로직 적용
-- 서비스 간 데이터 정합성 유지 및 비동기 통신의 안정성 보장
-
-### 3. Kafka 기반 비동기 메시지 브로커
-- 회원 삭제/수정 등의 이벤트를 Kafka 메시지로 발행
-- 이벤트 구독자는 Kafka를 통해 메시지를 받아 gRPC 기반 동기화 수행
-- 서비스 간 직접 호출 없이 느슨한 결합 실현
-
-### 4. WebSocket 기반 실시간 채팅
-- 그룹 채팅 기능은 WebSocket을 활용하여 실시간 메시지 송수신 구현
-- pub/sub 구조로 특정 채팅방 내 사용자 간 빠르고 효율적인 커뮤니케이션 지원
-- 읽음 처리, 즐겨찾기, 채팅방 검색 등 다양한 부가 기능 탑재
-
-### 5. AI Hub 기반 진단 및 대화형 모델 연동
-- 사용자 입력 데이터를 기반으로 AI 진단 모델(Python 기반) 실행
-- RAG 기법을 활용하여 사용자 맥락에 맞는 AI 응답 생성
-- LLM과 연동된 AI 채팅방 기능을 통해 상담형 대화 UX 제공
 
 <hr>
 
@@ -98,6 +80,24 @@ API 게이트웨이를 통해 유기적으로 연결되며, 확장성과 장애 
 ![캡스톤 디자인 시스템 아키텍처 (1)](https://github.com/user-attachments/assets/e4f64607-ba67-4384-a3e6-2dcc526380a3)
 
 <br>
+
+<hr>
+
+## 🚀 Core Engineering & Technical Achievements
+
+### 1. 장애 격리를 위한 외부 API(CODEF) 아키텍처 고도화 (Port & Adapter)
+**[문제 인식]** 초기 설계에서는 외부 API 통신 로직과 내부 DB 트랜잭션 계층이 강하게 결합되어 있었습니다. 이로 인해 외부 API(CODEF)의 응답 지연이 발생할 경우, 내부 DB 커넥션 풀까지 고갈되어 전체 시스템 장애로 이어질 수 있는 치명적인 구조적 문제를 발견했습니다.
+
+**[해결 및 결과]** 이를 해결하기 위해 백엔드 도메인 계층이 외부 기술 사양에 종속되지 않도록 **Port & Adapter 아키텍처**를 도입했습니다. 인터페이스(Port)를 통해 기술을 격리하고, 이를 구현한 어댑터(WebClient 기반 Caller)를 통해 통신하도록 구조를 개편했습니다. 결과적으로 외부 API의 장애나 지연이 내부 리소스에 미치는 영향을 차단하여 시스템 안정성을 획기적으로 향상시켰습니다.
+*(👉 상세 트러블슈팅 내용과 아키텍처 다이어그램은 아래 섹션에서 확인 가능합니다.)*
+
+### 2. WebClient Wrapping을 통한 비동기 통신 표준화 및 로깅 체계 고도화
+여러 외부 API(CODEF, OpenAI) 연동 과정에서 팀원마다 서로 다른 통신 방식(RestTemplate vs WebClient)을 혼용하여 코드 일관성과 유지보수성이 저하되는 문제를 겪었습니다. 이를 해결하고자 Spring Boot의 비동기 non-blocking 통신 방식인 **WebClient를 래핑한 커스텀 API Client**를 직접 구축하여 팀 내 표준 통신 모듈로 정착시켰습니다. 이를 통해 코드 컨벤션을 통일하고, 고도화된 로깅 체계를 적용하여 외부 API 통신 시 발생하는 디코딩 에러 및 타입 추적 디버깅 효율을 대폭 증대시켰습니다.
+
+### 3. 공동 여행 목표 기반 스마트 저축 플랜 관리 시스템 (SNPL 모델 구현)
+MZ세대의 부채 문제를 해결하기 위한 'Save Now, Pay Later(SNPL)' 금융 모델의 핵심 로직을 구현했습니다. 여러 사용자가 하나의 여행 목표를 공유하고, 각자의 분담금에 맞춰 실시간으로 저축 진행 상황을 관리할 수 있는 **공동 목표 및 여행 플랜 API**를 설계하고 구현했습니다. 사용자의 소비 패턴을 분석하여 목표 달성을 위한 맞춤형 저축 플랜 계산 로직을 연동함으로써, 단순한 기능 구현을 넘어 비즈니스 가치를 창출하는 핵심 로직을 주도적으로 개발했습니다.
+
+<hr>
 
 ### Transactional Outbox Pattern
 MSA 환경에서 가장 중요한 요소는 서버 간 데이터 동기화입니다. 이를 위해 Transactional Outbox Pattern을 적용하여 <br>
