@@ -1,4 +1,6 @@
-<h1 align="center">moneyJ - 소비 패턴 기반 여행 저축 가이드 서비스</h1>
+<h1 align="center">
+  <img src="https://capsule-render.vercel.app/api?type=transparent&color=gradient&customColorList=8A2BE2,C71585&text=moneyJ%20Backend%20Server&fontSize=50&fontAlignY=60" alt="moneyJ Title">
+</h1>
 
 > **"단순한 저축을 넘어, 사용자의 소비 패턴을 분석해 스마트한 공동 여행 자금 마련을 돕습니다."**
 
