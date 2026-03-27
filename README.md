@@ -77,8 +77,7 @@ API 게이트웨이를 통해 유기적으로 연결되며, 확장성과 장애 
 ### 시스템 아키텍처
 각 서비스 기능은 독립적인 서비스로 구성되어 있으며, 통신은 주로 REST API 및 Kafka, gRPC를 통해 이루어집니다. <br>
 또한 서비스 전반은 Docker를 통해 컨테이너화되어 관리됩니다. <br>
-<img width="979" height="535" alt="image" src="https://github.com/user-attachments/assets/bf465488-fb1f-4029-a9c4-684b9a17ba80" />
-
+<img width="1774" height="875" alt="image" src="https://github.com/user-attachments/assets/f1cb842e-e6da-4150-8e1c-f19714e13cbc" />
 
 <br>
 
