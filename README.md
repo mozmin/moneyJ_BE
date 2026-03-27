@@ -50,7 +50,7 @@
 <hr>
 
 ## 아키텍처
-<img width="1902" height="854" alt="moneyJ 시스템 아키텍처" src="https://github.com/user-attachments/assets/db122c86-c81a-484f-857c-beae080d9f6c" />
+<img width="1165" height="588" alt="image" src="https://github.com/user-attachments/assets/08e2d2bc-7ac0-4ca6-b680-48d9373e4e2b" />
 
 
 본 시스템은 사용자의 사진 진단 및 AI 기반 챗봇 기능을 제공하는 MSA반의 서비스 구조로 설계되어 있습니다. <br>
