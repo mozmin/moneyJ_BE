@@ -50,8 +50,7 @@
 <hr>
 
 ## 아키텍처
-<img width="1165" height="588" alt="image" src="https://github.com/user-attachments/assets/08e2d2bc-7ac0-4ca6-b680-48d9373e4e2b" />
-
+<img width="1245" height="640" alt="image" src="https://github.com/user-attachments/assets/ec922643-07d6-45ab-bd71-67f747b90ddb" />
 
 본 시스템은 사용자의 사진 진단 및 AI 기반 챗봇 기능을 제공하는 MSA반의 서비스 구조로 설계되어 있습니다. <br>
 각 마이크로서비스는 역할에 따라 분리되어 있으며, 독립적인 데이터베이스와 서버 인스턴스를 통해 <br>
