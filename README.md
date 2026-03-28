@@ -12,7 +12,7 @@
 ## 1. Project Overview
 
 - **개발 기간:** 2025.08.22 ~ 진행 중
-- **참여 인원:** 5명 (Front-end 2명, Back-end 3명)
+- **참여 인원:** 6명 (Front-end 3명, Back-end 3명)
 - **담당 역할:** Backend Developer
   - CODEF API 기반 계좌/카드 데이터 연동 파이프라인 구축
   - 공동 여행 플랜 및 그룹 저축 로직 API 설계
