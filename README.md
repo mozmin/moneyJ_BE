@@ -3,20 +3,21 @@
 <br>
 <br>
 
-> “가고 싶은 여행을, 빚이 아닌 저축으로 준비하자!”
->  
-> MZ 세대의 소비 분석과 목표 저축을 돕는 맞춤형 금융 관리 서비스
-> 
-> 사용자의 소비 패턴을 분석해 스마트한 공동 여행 자금 마련을 돕습니다.
+> 건강한 저축 습관 형성을 위한 소비 패턴 기반 여행 저축 가이드 서비스
 
-## 1. Project Overview
+## Core Contributions (핵심 기여도)
 
-- **개발 기간:** 2025.08.22 ~ 진행 중
-- **참여 인원:** 6명 (Front-end 3명, Back-end 3명)
-- **담당 역할:** Backend Developer
-  - CODEF API 기반 계좌/카드 데이터 연동 파이프라인 구축
-  - 공동 여행 플랜 및 그룹 저축 로직 API 설계
-  - 사용자 소비 패턴 기반 데이터 처리
+### 1. 실시간 금융 데이터 연동 파이프라인 구축
+  - CODEF API를 활용하여 은행 계좌 및 카드 거래 데이터를 수집하는 안정적인 데이터 파이프라인 설계.
+  - 보안을 위한 RSA 암복호화 및 API 응답 디코딩 로직 구현으로 데이터 무결성 확보.
+
+### 2. 공동 금융 비즈니스 로직 API 설계
+  - 다수의 사용자가 함께 참여하는 공동 여행 플랜 및 그룹 저축 시스템의 핵심 API 설계 및 구현.
+  - 복잡한 그룹 예산 산출 로직과 상태 관리 시스템을 구축하여 협업 금융 기능의 안정성 강화.
+
+### 3. 사용자 중심 소비 패턴 데이터 처리
+  - 대량의 거래 내역을 분석하여 사용자별 소비 패턴 기반의 맞춤형 데이터 전처리 수행.
+  - 가공된 데이터를 바탕으로 AI 분석 모델(OpenAI)에 최적화된 데이터 스키마 설계 및 제공.
 
 <br>
 
@@ -53,12 +54,13 @@
 <img width="1245" height="640" alt="image" src="https://github.com/user-attachments/assets/ec922643-07d6-45ab-bd71-67f747b90ddb" />
 
 <br>
+<br>
 
-  본 시스템은 사용자의 금융 데이터 통합 관리 및 AI 기반 맞춤형 자산 분석 기능을 제공하는 'moneyJ' 서비스의 백엔드 아키텍처로 설계되어 있습니다. <br>
-  각 도메인(계좌, 카드, 거래, 여행 등)은 역할에 따라 모듈 단위로 분리되어 있으며, Spring Boot의 계층형 아키텍처를 통해 <br>
-  비즈니스 로직의 독립성과 유지보수성을 보장합니다. 외부 금융 API인 CODEF와의 연동을 통해 실시간 자산 정보를 수집하고, <br>
-  OpenAI LLM을 활용한 지능형 소비 진단 및 여행 예산 가이드를 제공하는 것이 특징입니다. 전체 시스템은 Docker 기반의 <br>
-  컨테이너 환경에서 운용되며, Prometheus를 통한 실시간 모니터링 체계를 갖추어 서비스의 안정성과 확장성을 확보하고 있습니다. <br>
+본 시스템은 사용자의 금융 데이터 통합 관리 및 AI 기반 맞춤형 자산 분석 기능을 제공하는 'moneyJ' 서비스의 백엔드 아키텍처로 설계되어 있습니다. <br>
+각 도메인(계좌, 카드, 거래, 여행 등)은 역할에 따라 모듈 단위로 분리되어 있으며, Spring Boot의 계층형 아키텍처를 통해 <br>
+비즈니스 로직의 독립성과 유지보수성을 보장합니다. 외부 금융 API인 CODEF와의 연동을 통해 실시간 자산 정보를 수집하고, <br>
+OpenAI LLM을 활용한 지능형 소비 진단 및 여행 예산 가이드를 제공하는 것이 특징입니다. 전체 시스템은 Docker 기반의 <br>
+컨테이너 환경에서 운용되며, Prometheus를 통한 실시간 모니터링 체계를 갖추어 서비스의 안정성과 확장성을 확보하고 있습니다. <br>
 
 
 | 서비스명               | 설명                                                     |
@@ -85,19 +87,187 @@
 
 <hr>
 
-## 4. Core Engineering & Technical Achievements
+## 4. Technical Achievements
 
-### 1. 장애 격리를 위한 외부 API(CODEF) 아키텍처 고도화 (Port & Adapter)
-**[문제 인식]** 초기 설계에서는 외부 API 통신 로직과 내부 DB 트랜잭션 계층이 강하게 결합되어 있었습니다. 이로 인해 외부 API(CODEF)의 응답 지연이 발생할 경우, 내부 DB 커넥션 풀까지 고갈되어 전체 시스템 장애로 이어질 수 있는 치명적인 구조적 문제를 발견했습니다.
+### 4-1. CODEF API
+**External Financial Data Pipeline (CODEF API)** <br>
+금융 서비스의 핵심은 신뢰할 수 있는 데이터를 안전하게 가져오는 것입니다. 이를 위해 CODEF API를 활용하여 사용자의 은행/카드 데이터를 수집하는 전용
+파이프라인을 구축하였습니다.
 
-**[해결 및 결과]** 이를 해결하기 위해 백엔드 도메인 계층이 외부 기술 사양에 종속되지 않도록 **Port & Adapter 아키텍처**를 도입했습니다. 인터페이스(Port)를 통해 기술을 격리하고, 이를 구현한 어댑터(WebClient 기반 Caller)를 통해 통신하도록 구조를 개편했습니다. 결과적으로 외부 API의 장애나 지연이 내부 리소스에 미치는 영향을 차단하여 시스템 안정성을 획기적으로 향상시켰습니다.
-*(👉 상세 트러블슈팅 내용과 아키텍처 다이어그램은 아래 섹션에서 확인 가능합니다.)*
+<br>
 
-### 2. WebClient Wrapping을 통한 비동기 통신 표준화 및 로깅 체계 고도화
-여러 외부 API(CODEF, OpenAI) 연동 과정에서 팀원마다 서로 다른 통신 방식(RestTemplate vs WebClient)을 혼용하여 코드 일관성과 유지보수성이 저하되는 문제를 겪었습니다. 이를 해결하고자 Spring Boot의 비동기 non-blocking 통신 방식인 **WebClient를 래핑한 커스텀 API Client**를 직접 구축하여 팀 내 표준 통신 모듈로 정착시켰습니다. 이를 통해 코드 컨벤션을 통일하고, 고도화된 로깅 체계를 적용하여 외부 API 통신 시 발생하는 디코딩 에러 및 타입 추적 디버깅 효율을 대폭 증대시켰습니다.
+**파이프라인 개요**
+- 보안 중심 설계: RSA-2048 암호화를 통해 사용자 민감 정보(계정 정보 등)를 안전하게 보호
+- Connected ID 체계: 일회성 인증이 아닌, 지속적인 데이터 수집을 위한 고유 식별자 관리
+- 정규화 및 디코딩: 복잡한 API 응답 데이터를 서비스 도메인 모델로 변환하는 전용 디코더 구현
 
-### 3. 공동 여행 목표 기반 스마트 저축 플랜 관리 시스템 (SNPL 모델 구현)
-MZ세대의 부채 문제를 해결하기 위한 'Save Now, Pay Later(SNPL)' 금융 모델의 핵심 로직을 구현했습니다. 여러 사용자가 하나의 여행 목표를 공유하고, 각자의 분담금에 맞춰 실시간으로 저축 진행 상황을 관리할 수 있는 **공동 목표 및 여행 플랜 API**를 설계하고 구현했습니다. 사용자의 소비 패턴을 분석하여 목표 달성을 위한 맞춤형 저축 플랜 계산 로직을 연동함으로써, 단순한 기능 구현을 넘어 비즈니스 가치를 창출하는 핵심 로직을 주도적으로 개발했습니다.
+<br>
+
+**핵심 데이터 구성**
+
+| 요소 | 설명 |
+| :--- | :--- |
+| **CODEF Access Token** | API 호출을 위한 2단계 인증 토큰 (DB 저장 및 만료 주기 관리) |
+| **Connected ID** | 사용자의 금융 기관 계정과 1:1 매핑되는 고유 식별 코드 |
+| **RSA Encryption** | 암호, 계좌번호 등 민감 데이터 전송 시 적용되는 비대칭키 암호화 방식 |
+| **Response Decoding** | Base64 및 URL 인코딩된 금융 응답 데이터의 가독화 처리 |
+
+<br>
+
+**데이터 연동 흐름도** 
+<img width="2400" height="1786" alt="Gemini_Generated_Image_oiakvloiakvloiak" src="https://github.com/user-attachments/assets/fc8f0faf-5c1b-4b5e-81c0-575340d350ab" />
+
+1. 인증 단계 (OAuth 2.0): 서비스 서버와 CODEF API 간의 Client ID/Secret 기반 토큰 발급
+2. 계정 연결 단계 (Connected ID): 사용자 금융 인증 정보를 RSA 암호화하여 전송 후 고유 ID 발급 및 저장
+3. 데이터 수집 단계 (Scraping): 저장된 Connected ID를 사용하여 은행/카드사의 거래 내역 실시간 요청
+4. 가공 및 저장 단계 (Decoding): 응답 데이터를 디코딩하고, 서비스 요구사항에 맞춰 정규화 후 DB 반영
+   
+---
+
+**1단계: 보안 전송을 위한 RSA 암호화** 
+사용자의 금융 계정 정보는 매우 민감하므로, CODEF에서 요구하는 공공기관 수준의 RSA 암호화 방식을 적용하였습니다.
+
+1 // [직접 입력] RsaEncryptor.java
+2 // RSA public key를 활용한 암호화 로직을 여기에 넣어주세요.
+
+- 역할: 사용자 비밀번호 및 인증 정보를 CODEF 서버로 전송하기 전 암호화
+- 특징: RSA/ECB/PKCS1Padding 등의 표준 보안 규격 준수
+
+<br>
+
+**2단계: 안정적인 API 통신 및 응답 처리** (API Client)
+
+네트워크 지연이나 외부 API 오류에 대응하기 위해 공통 API 클라이언트를 구축하고, 복잡한 응답 형식을 처리하는 디코더를 구현했습니다.
+
+1 // [직접 입력] CodefApiClient.java 또는 ApiResponseDecoder.java
+2 // API 호출부나 응답 데이터를 파싱/디코딩하는 로직을 넣어주세요.
+
+- 역할: 응답 데이터(Base64) 디코딩 및 JSON 파싱을 통한 도메인 객체 변환
+- 특징: 응답 코드(CF-00000 등)에 따른 세분화된 예외 처리 시스템 구축
+
+<br>
+
+**3단계: 스케줄링 기반 데이터 동기화** 
+
+사용자가 앱을 열지 않아도 거래 내역이 최신화될 수 있도록 백그라운드 동기화 로직을 설계했습니다.
+
+1 // [직접 입력] AccountSyncScheduler.java 또는 TransactionSyncService.java
+2 // 주기적으로 CODEF에서 데이터를 긁어와 DB를 업데이트하는 로직을 넣어주세요.
+
+- 역할: Connected ID 리스트를 순회하며 정기적으로 금융 데이터(잔액, 내역) 동기화
+- 특징: API 호출 제한(Rate Limit)을 고려한 배치 처리 및 장애 시 재시도 전략 적용
+
+<br>
+
+---
+
+### 4-2. CODEF API 트러블슈팅
+
+### 기존 구조의 문제점
+
+1. @Transactional이 적용된 하나의 거대한 클래스(God Class) 내에서 외부 API 호출과 DB 저장이 동시에 발생. 외부 API 지연 시 DB 커넥션 풀이 고갈될 위험이 존재.
+
+3. 도메인과 외부 인프라의 강한 결합
+
+3. 계좌 하나를 연동하기 위해 클라이언트(프론트엔드)가 백엔드로 3번 연속 API를 호출해야 하는 무거운 구조.
+
+4. API 응답을 Map<String, Object>로 받아 하드코딩으로 파싱
+
+
+### 핵심 개선 사항
+
+1. 외부 API 통신과 DB 트랜잭션의 완벽한 분리
+
+- 거대 클래스를 역할에 따라 3개의 계층으로 완전히 분리
+  
+| 클래스명 | 주요 역할 | 트랜잭션 (@Transactional) | 특징 및 의존성 |
+| :--- | :--- | :---: | :--- |
+| **CodefCredentialFacade** | 전체 흐름 제어 (Orchestration) | 미적용 | 서비스와 API 호출자 사이의 로직 조율 |
+| **CodefCredentialApiCaller** | 외부 API 통신 및 데이터 파싱 | 미적용 | **DB 의존성 없음**, 외부 통신 및 데이터 가공 전담 |
+| **CodefInstitutionService** | DB 저장 및 영속성 관리 | **적용** | DB CRUD 및 데이터 정합성 보장 |
+
+<br>
+
+2. WebClient Wrapping을 통한 비동기 통신 표준화 및 로깅 체계 고도화
+
+여러 외부 API(CODEF, OpenAI) 연동 과정에서 팀원마다 서로 다른 통신 방식(RestTemplate vs WebClient)을 혼용하여 코드 일관성과 유지보수성이 저하.
+이를 해결하고자 Spring Boot의 비동기 non-blocking 통신 방식인 WebClient를 래핑한 커스텀 API Client를 직접 구축하여 팀 내 표준 통신 모듈로 정착
+```java
+@Component
+@RequiredArgsConstructor
+public class CodefApiClient {
+
+    private final WebClient codefWebClient;
+    private final CodefAuthService codefAuthService;
+
+    /**
+     * 외부 API와 실제 통신 수행
+     */
+    public String executePost(String url, Object body) {
+        String token = codefAuthService.getValidAccessToken();
+
+        return codefWebClient.post()
+                .uri(url)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .bodyValue(body)
+                .exchangeToMono(resp -> {
+                    // 응답 상태(4xx, 5xx)에 따른 로깅 및 처리 생략...
+                    return resp.bodyToMono(String.class).defaultIfEmpty("");
+                })
+                .block(); // 외부 연동의 정합성을 위해 동기 처리
+    }
+
+    /**
+     * 2. 응답 파싱 + 비즈니스 검증 공통화
+     * @param <T> 기대하는 데이터 모델 타입
+     */
+    public <T> T fetchAndDecode(String url, Object body, TypeReference<CodefResponseDTO<T>> typeReference) {
+
+        // 1) API 호출 (Raw 데이터 획득)
+        String rawResponse = executePost(url, body);
+
+        // 2) JSON 파싱 (Generic 대응)
+        CodefResponseDTO<T> responseDTO = ApiResponseDecoder.decode(rawResponse, typeReference);
+
+        // 3) 비즈니스 에러 검증 (CODEF 결과 코드가 '성공'인지 확인)
+        if (responseDTO == null || !responseDTO.result().isSuccess()) {
+            throw MoneyjException.of(CodefErrorCode.BUSINESS_ERROR);
+        }
+
+        return responseDTO.data(); // 최종 정제된 데이터 반환
+    }
+}
+```
+
+3. ACL(Anti-Corruption Layer)과 Adapter 패턴 도입
+
+- 외부 시스템의 변경이 핵심 도메인을 오염시키지 않도록 **ACL(부패 방지 계층)**을 구축.
+
+- 도메인 계층에는 CardProvider 등 순수 인터페이스(Port)만 정의.
+
+- 인프라 계층의 CodefCardAdapter가 이를 구현하며, 외부 API 데이터를 우리 서비스만의 표준 DTO(ExternalAccountDTO)로 번역하여 전달.
+
+
+4. 클라이언트 네트워크 비용 감소 및 CQRS 적용
+
+- API 통합: 클라이언트가 3번 호출하던 연동 프로세스(ID발급 → 기관등록 → 조회)를 1개의 /connect API로 통합하여 클라이언트의 부담을 줄이고 응답 속도를 개선.
+
+- 명령과 조회 분리: 조회와 DB 저장이 혼재되어 있던 기존 메서드를 순수 조회(fetchCards)와 저장(linkCard) 명령으로 완벽히 분리하여 사이드 이펙트를 차단.
+
+5. DTO 기반의 안전한 데이터 파싱 구현
+
+- 불안정한 Map 파싱을 걷어내고 공통 응답 DTO를 구축.
+
+- CODEF API 특유의 가변적인 응답 규격(성공 시 배열, 실패 시 객체 반환)을 처리하기 위해 Jackson의 ACCEPT_SINGLE_VALUE_AS_ARRAY 옵션을 적용한 커스텀 디코더(ApiResponseDecoder)를 구현하여 타입 안정성을 100% 확보.
+
+<br>
+
+### 결과 (Result)
+
+- 안정성 및 확장성 확보: 외부 장애가 내부 시스템으로 전파되지 않는 구조를 만들었고, 향후 금융 데이터 제공자가 변경되더라도 유연하게 대응할 수 있는 기반을 마련.
+
+- 예측 가능한 코드: 객체의 책임을 명확히(SRP) 분리하고 Facade 패턴을 도입함으로써, 메서드 이름만 보고도 동작을 예측할 수 있는 유지보수성 향상.
+
 
 <hr>
 
@@ -238,46 +408,11 @@ public void handleKafkaEvent(OutboxEvent event) {
 인증 및 권한 관리, 회원정보 관리를 담당하는 컴포넌트 <br>
 ![image](https://github.com/user-attachments/assets/281fb738-64b3-40c2-a834-98414108e8fc)
 
-### Member Component API
-| URI                                    | Method | 설명                |
-| -------------------------------------- | ------ | ----------------- |
-| `/auth/identity/sign-up`               | POST   | 사용자 회원가입          |
-| `/auth/identity/sign-in`               | POST   | 사용자 로그인           |
-| `/auth/identity/reissue`               | POST   | 사용자 접근 토큰 갱신      |
-| `/auth/identity/social`                | POST   | 사용자 소셜 로그인        |
-| `/auth/identity/is-duplicate/{userId}` | GET    | 사용자 아이디 중복체크      |
-| `/auth/identity/find-id`               | POST   | 사용자 아이디 찾기        |
-| `/auth/identity/verify-code/{userId}`  | POST   | 이메일 인증을 위한 코드 전송  |
-| `/auth/identity/is-verify`             | POST   | 사용자의 인증 코드 유효성 검사 |
-| `/auth/identity/password`              | PATCH  | 사용자 비밀번호 변경       |
-| `/auth/api/user/{id}`                  | GET    | 사용자 정보 반환         |
-| `/auth/api/user/logout`                | POST   | 사용자 로그아웃          |
-| `/auth/api/user/{id}`                  | DELETE | 사용자 회원 탈퇴         |
-| `/auth/api/user/{id}`                  | PATCH  | 사용자 회원정보 변경       |
-
 <br>
 
 ### Chat Component
 사용자의 채팅방, 채팅 이력, 채팅방 고정 등을 관리하는 컴포넌트 <br>
 ![image](https://github.com/user-attachments/assets/f4501859-3207-4e8d-8e4d-1dda88909773)
-
-### Chat Component API
-| URI                                             | Method    | 설명                   |
-| ----------------------------------------------- | --------- | -------------------- |
-| `/chat/room`                                    | POST      | 새로운 그룹 채팅방 생성        |
-| `/chat/rooms`                                   | GET       | 모든 그룹 채팅방 반환         |
-| `/chat/rooms/{memberId}`                        | GET       | 특정 사용자가 참여중인 채팅방 반환  |
-| `/chat/room/{roomId}/{memberId}`                | POST      | 특정 사용자가 그룹 채팅방에 참여   |
-| `/chat/room/{roomId}/{memberId}`                | DELETE    | 특정 사용자가 그룹 채팅방 참여 해지 |
-| `/chat/room/is-participate/{roomId}/{memberId}` | GET       | 특정 사용자의 채팅방 참여 여부 확인 |
-| `/chat/rooms/keyword/{keyword}`                 | GET       | 키워드로 채팅방 검색          |
-| `/chat/pin/{roomId}/{memberId}`                 | GET       | 특정 채팅방 즐겨찾기 여부 확인    |
-| `/chat/pin/{roomId}/{memberId}`                 | POST      | 채팅방 즐겨찾기 등록          |
-| `/chat/pin/{pinId}`                             | DELETE    | 즐겨찾기 삭제              |
-| `/chat/message/{roomId}`                        | GET       | 특정 채팅방의 메시지 조회       |
-| `/chat/unread-clear/{roomId}/{memberId}`        | POST      | 읽지 않은 메시지 수 초기화      |
-| `/chat/unread-count/{roomId}/{memberId}`        | GET       | 읽지 않은 메시지 수 반환       |
-| `/chat/message`                                 | WebSocket | pub/sub 방식 메시지 송수신   |
 
 <br>
 
@@ -285,35 +420,12 @@ public void handleKafkaEvent(OutboxEvent event) {
 사용자의 AI 채팅 이력을 관리하는 컴포넌트 <br>
 ![image](https://github.com/user-attachments/assets/4fa72840-be37-4fb9-9913-d9b319da02d0)
 
-### LLM Chat Component API
-| URI                                         | Method | 설명                  |
-| ------------------------------------------- | ------ | ------------------- |
-| `/py/llm/chat`                              | POST   | RAG 기반 LLM 모델 채팅 반환 |
-| `/py/llm/diagnosis`                         | POST   | 진단 결과에 대한 LLM 응답 반환 |
-| `/llm/chat-section/{memberId}/{title}`      | POST   | 사용자 AI 채팅방 개설       |
-| `/llm/chat-section/{chatSectionId}`         | DELETE | AI 채팅방 삭제           |
-| `/llm/chat-section/{chatSectionId}/{title}` | PATCH  | AI 채팅방 제목 변경        |
-| `/llm/chat-sections/{memberId}`             | GET    | 사용자 AI 채팅방 리스트 반환   |
-| `/llm/chat/{chatSectionId}`                 | GET    | AI 채팅방의 채팅 정보 조회    |
-| `/llm/chat/{chatSectionId}`                 | POST   | AI 채팅방의 채팅 정보 저장    |
-
 <br>
 
 ### Place Component
 반려동물 동반 가능한 장소 데이터를 관리하는 컴포넌트 <br>
 ![image](https://github.com/user-attachments/assets/5bc2947e-5569-4716-9886-a4d0a77fc4b0)
 
-### Place Component API
-| URI                           | Method | 설명                       |
-| ----------------------------- | ------ | ------------------------ |
-| `/place/all`                  | GET    | 모든 장소 데이터 반환             |
-| `/place/category`             | GET    | 카테고리 별 장소 데이터 반환         |
-| `/place/categories`           | GET    | 전체 카테고리 종류 반환            |
-| `/place/dist/{category}`      | POST   | 거리순으로 장소 정렬 후 반환         |
-| `/place/open/{category}`      | GET    | 현재 운영중인 장소 리스트 (카테고리 필터) |
-| `/place/open/dist/{category}` | POST   | 운영중인 장소 거리순 반환 (카테고리 필터) |
-| `/place/search/{keyword}`     | GET    | 키워드로 장소 검색               |
-| `/place/filter`               | POST   | 필터를 통한 장소 검색             |
 
 <br>
 
@@ -321,20 +433,9 @@ public void handleKafkaEvent(OutboxEvent event) {
 반려동물 사진을 통해 진단 서비스를 처리하는 컴포넌트 <br>
 ![image](https://github.com/user-attachments/assets/22c51131-9349-4bbd-8f92-7627dda8069c)
 
-### Diagnosis Component API ( 개발 중 )
-| URI                | Method | 설명            |
-| ------------------ | ------ | ------------- |
-| `/py/predict/skin` | POST   | 반려동물 피부 질환 진단 |
-| `/py/predict/eye`  | POST   | 반려동물 안구 질환 진단 |
 
 <br>
 
 ### Integration Component
 전체 서비스 컴포넌트를 관리하고 클라이언트 요청 라우팅 및 외부 API 호출을 관리하는 컴포넌트 <br>
 ![image](https://github.com/user-attachments/assets/30aaa977-8fd1-432c-9ec2-ae9be5ae76a6)
-
-### Integration Component API
-| URI                                | Method | 설명              |
-| ---------------------------------- | ------ | --------------- |
-| `/proxy/api/address-to-coordinate` | POST   | 주소 → 좌표 변환      |
-| `/proxy/api/route`                 | POST   | 목적지까지의 교통 정보 반환 |
