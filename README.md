@@ -125,11 +125,33 @@ OpenAI LLM을 활용한 지능형 소비 진단 및 여행 예산 가이드를 �
 ---
 
 **1단계: 보안 전송을 위한 RSA 암호화** 
-사용자의 금융 계정 정보는 매우 민감하므로, CODEF에서 요구하는 공공기관 수준의 RSA 암호화 방식을 적용하였습니다.
+- 사용자의 금융 계정 정보는 매우 민감하므로, CODEF에서 요구하는 공공기관 수준의 RSA 암호화 방식을 적용하였습니다.
 
-1 // [직접 입력] RsaEncryptor.java
-2 // RSA public key를 활용한 암호화 로직을 여기에 넣어주세요.
+(RsaEncryptor.java)
+``` java
+public class RsaEncryptor {
 
+    @SneakyThrows
+    public static String encryptWithPemPublicKey(String plain, String pem) {
+
+        String base64 = pem.replace("-----BEGIN PUBLIC KEY-----", "")
+                .replace("-----END PUBLIC KEY-----", "")
+                .replaceAll("\\s", "");
+
+        byte[] der = Base64.getDecoder().decode(base64);
+
+        PublicKey key = KeyFactory.getInstance("RSA")
+                .generatePublic(new X509EncodedKeySpec(der));
+
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+
+        byte[] enc = cipher.doFinal(plain.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+
+        return Base64.getEncoder().encodeToString(enc);
+    }
+}
+```
 - 역할: 사용자 비밀번호 및 인증 정보를 CODEF 서버로 전송하기 전 암호화
 - 특징: RSA/ECB/PKCS1Padding 등의 표준 보안 규격 준수
 
@@ -139,8 +161,36 @@ OpenAI LLM을 활용한 지능형 소비 진단 및 여행 예산 가이드를 �
 
 네트워크 지연이나 외부 API 오류에 대응하기 위해 공통 API 클라이언트를 구축하고, 복잡한 응답 형식을 처리하는 디코더를 구현했습니다.
 
-1 // [직접 입력] CodefApiClient.java 또는 ApiResponseDecoder.java
-2 // API 호출부나 응답 데이터를 파싱/디코딩하는 로직을 넣어주세요.
+(ApiResponseDecoder.java)
+```java
+@Slf4j
+public class ApiResponseDecoder {
+
+    private static final ObjectMapper objectMapper = new ObjectMapper()
+            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+
+    /**
+     * URL 인코딩된 응답을 디코딩하고 지정된 DTO 타입으로 파싱
+     */
+    public static <T> T decode(String encodedResponse, TypeReference<T> typeReference) {
+        // (입력값 검증 생략)
+
+        try {
+            // 1. URL 디코딩 (StandardCharsets.UTF_8)
+            String decodedJson = URLDecoder.decode(encodedResponse, StandardCharsets.UTF_8);
+
+            // 2. Jackson ObjectMapper를 이용한 객체 매핑
+            return objectMapper.readValue(decodedJson, typeReference);
+
+        } catch (Exception e) {
+            log.error("API 응답 디코딩 또는 파싱 실패", e);
+            throw MoneyjException.of(CodefErrorCode.PARSING_ERROR);
+        }
+    }
+
+    // (Map 형태의 범용 디코딩 메서드 오버로딩 생략...)
+}
+```
 
 - 역할: 응답 데이터(Base64) 디코딩 및 JSON 파싱을 통한 도메인 객체 변환
 - 특징: 응답 코드(CF-00000 등)에 따른 세분화된 예외 처리 시스템 구축
@@ -151,8 +201,48 @@ OpenAI LLM을 활용한 지능형 소비 진단 및 여행 예산 가이드를 �
 
 사용자가 앱을 열지 않아도 거래 내역이 최신화될 수 있도록 백그라운드 동기화 로직을 설계했습니다.
 
-1 // [직접 입력] AccountSyncScheduler.java 또는 TransactionSyncService.java
-2 // 주기적으로 CODEF에서 데이터를 긁어와 DB를 업데이트하는 로직을 넣어주세요.
+(AccountSyncScheduler.java)
+```java
+@Service
+@RequiredArgsConstructor
+public class AccountSyncScheduler {
+
+    private final AccountRepository accountRepository;
+    private final AccountProvider accountProvider;
+
+    /**
+     * 매 6시간마다 전체 계좌 스냅샷 동기화
+     */
+    @Transactional
+    @Scheduled(cron = "0 0 0,6,12,18 * * *")
+    public void syncAllAccountsSnapshot() {
+        List<Account> accounts = accountRepository.findAll();
+        if (accounts.isEmpty()) return;
+
+        // 중복 API 호출 방지를 위한 로컬 캐시 (userId + orgCode 조합)
+        Map<String, List<ExternalAccountDTO>> cache = new HashMap<>();
+
+        for (Account account : accounts) {
+            // (유효성 검사 생략)
+            String key = account.getUser().getUserId() + "|" + account.getOrganizationCode();
+
+            // 1. 캐시 확인 및 외부 API 호출 (computeIfAbsent 활용)
+            List<ExternalAccountDTO> externalAccounts = cache.computeIfAbsent(key, k -> {
+                return accountProvider.fetchBankAccounts(account.getUser().getUserId(), account.getOrganizationCode());
+                // (응답 결과에 따른 빈 리스트 반환 로직 생략)
+            });
+
+            // 2. 계좌 번호 매칭을 통한 잔액 업데이트
+            externalAccounts.stream()
+                    .filter(acc -> account.getAccountNumber().equals(acc.accountNumber()))
+                    .findFirst()
+                    .ifPresent(match -> account.updateBalance(match.balance()));
+        }
+        
+        // (완료 로그 출력 생략)
+    }
+}
+```
 
 - 역할: Connected ID 리스트를 순회하며 정기적으로 금융 데이터(잔액, 내역) 동기화
 - 특징: API 호출 제한(Rate Limit)을 고려한 배치 처리 및 장애 시 재시도 전략 적용
