@@ -125,7 +125,7 @@ OpenAI LLM을 활용한 지능형 소비 진단 및 여행 예산 가이드를 �
 ---
 
 **1단계: 보안 전송을 위한 RSA 암호화** 
-- 사용자의 금융 계정 정보는 매우 민감하므로, CODEF에서 요구하는 공공기관 수준의 RSA 암호화 방식을 적용하였습니다.
+사용자의 금융 계정 정보는 매우 민감하므로, CODEF에서 요구하는 공공기관 수준의 RSA 암호화 방식을 적용하였습니다.
 
 (RsaEncryptor.java)
 ``` java
@@ -266,9 +266,11 @@ public class AccountSyncScheduler {
 
 ### 핵심 개선 사항
 
-1. 외부 API 통신과 DB 트랜잭션의 완벽한 분리
+<br>
 
-- 거대 클래스를 역할에 따라 3개의 계층으로 완전히 분리
+**외부 API 통신과 DB 트랜잭션의 완벽한 분리**
+
+거대 클래스를 역할에 따라 3개의 계층으로 완전히 분리
   
 | 클래스명 | 주요 역할 | 트랜잭션 (@Transactional) | 특징 및 의존성 |
 | :--- | :--- | :---: | :--- |
@@ -278,10 +280,11 @@ public class AccountSyncScheduler {
 
 <br>
 
-2. WebClient Wrapping을 통한 비동기 통신 표준화 및 로깅 체계 고도화
+**WebClient Wrapping을 통한 비동기 통신 표준화 및 로깅 체계 고도화**
 
 여러 외부 API(CODEF, OpenAI) 연동 과정에서 팀원마다 서로 다른 통신 방식(RestTemplate vs WebClient)을 혼용하여 코드 일관성과 유지보수성이 저하.
 이를 해결하고자 Spring Boot의 비동기 non-blocking 통신 방식인 WebClient를 래핑한 커스텀 API Client를 직접 구축하여 팀 내 표준 통신 모듈로 정착
+
 ```java
 @Component
 @RequiredArgsConstructor
@@ -329,26 +332,31 @@ public class CodefApiClient {
 }
 ```
 
-3. ACL(Anti-Corruption Layer)과 Adapter 패턴 도입
+<br>
 
-- 외부 시스템의 변경이 핵심 도메인을 오염시키지 않도록 **ACL(부패 방지 계층)**을 구축.
+**ACL(Anti-Corruption Layer)과 Adapter 패턴 도입**
 
-- 도메인 계층에는 CardProvider 등 순수 인터페이스(Port)만 정의.
+외부 시스템의 변경이 핵심 도메인을 오염시키지 않도록 **ACL(부패 방지 계층)**을 구축.
 
-- 인프라 계층의 CodefCardAdapter가 이를 구현하며, 외부 API 데이터를 우리 서비스만의 표준 DTO(ExternalAccountDTO)로 번역하여 전달.
+도메인 계층에는 CardProvider 등 순수 인터페이스(Port)만 정의.
 
+인프라 계층의 CodefCardAdapter가 이를 구현하며, 외부 API 데이터를 우리 서비스만의 표준 DTO(ExternalAccountDTO)로 번역하여 전달.
 
-4. 클라이언트 네트워크 비용 감소 및 CQRS 적용
+<br><br>
 
-- API 통합: 클라이언트가 3번 호출하던 연동 프로세스(ID발급 → 기관등록 → 조회)를 1개의 /connect API로 통합하여 클라이언트의 부담을 줄이고 응답 속도를 개선.
+**클라이언트 네트워크 비용 감소 및 CQRS 적용**
 
-- 명령과 조회 분리: 조회와 DB 저장이 혼재되어 있던 기존 메서드를 순수 조회(fetchCards)와 저장(linkCard) 명령으로 완벽히 분리하여 사이드 이펙트를 차단.
+API 통합: 클라이언트가 3번 호출하던 연동 프로세스(ID발급 → 기관등록 → 조회)를 1개의 /connect API로 통합하여 클라이언트의 부담을 줄이고 응답 속도를 개선.
 
-5. DTO 기반의 안전한 데이터 파싱 구현
+명령과 조회 분리: 조회와 DB 저장이 혼재되어 있던 기존 메서드를 순수 조회(fetchCards)와 저장(linkCard) 명령으로 완벽히 분리하여 사이드 이펙트를 차단.
 
-- 불안정한 Map 파싱을 걷어내고 공통 응답 DTO를 구축.
+<br>
 
-- CODEF API 특유의 가변적인 응답 규격(성공 시 배열, 실패 시 객체 반환)을 처리하기 위해 Jackson의 ACCEPT_SINGLE_VALUE_AS_ARRAY 옵션을 적용한 커스텀 디코더(ApiResponseDecoder)를 구현하여 타입 안정성을 100% 확보.
+**DTO 기반의 안전한 데이터 파싱 구현**
+
+불안정한 Map 파싱을 걷어내고 공통 응답 DTO를 구축.
+
+CODEF API 특유의 가변적인 응답 규격(성공 시 배열, 실패 시 객체 반환)을 처리하기 위해 Jackson의 ACCEPT_SINGLE_VALUE_AS_ARRAY 옵션을 적용한 커스텀 디코더(ApiResponseDecoder)를 구현하여 타입 안정성을 100% 확보.
 
 <br>
 
